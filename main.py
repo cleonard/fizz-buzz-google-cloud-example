@@ -1,10 +1,6 @@
+import json
 import logging
 import traceback
-
-from flask import Flask, jsonify
-
-app = Flask(__name__)
-
 
 def try_catch_log(wrapped_func):
   def wrapper(*args, **kwargs):
@@ -38,12 +34,26 @@ def gen_fizzbuzz(length):
         n += 1
 
 
-@app.route("/fizzbuzz/<int:length>")
-def fizzbuzz(length):
+def fizzbuzz(request):
+    error_response = {'error': 'Please provide a positive interger with the key `length` in the URLs querystring.'}
+    try:
+        length = int(request.args.get('length'))
+    except:
+        return json.dumps(error_response)
+
+    if length < 1:
+        return json.dumps(error_response)
+
     if length > 500:
-        return jsonify({"fizzbuzz": "{:,}? That's just silly!".format(length)})
-    return jsonify({"fizzbuzz": [f for f in gen_fizzbuzz(length)]})
+        return json.dumps({'fizzbuzz': "{:,}? That's just silly!".format(length)})
+    return json.dumps({"fizzbuzz": [f for f in gen_fizzbuzz(length)]})
+
+
+class Request:
+    def __init__(self, args):
+        self.args = args
 
 
 if __name__ == '__main__':
-    app.run()
+    request = Request({'length': 100})
+    print(fizzbuzz(request))
