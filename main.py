@@ -1,6 +1,23 @@
+import logging
+import traceback
+
 from flask import Flask, jsonify
 
 app = Flask(__name__)
+
+
+def try_catch_log(wrapped_func):
+  def wrapper(*args, **kwargs):
+    try:
+      response = wrapped_func(*args, **kwargs)
+    except Exception:
+      # Replace new lines with spaces so as to prevent several entries which
+      # would trigger several errors.
+      error_message = traceback.format_exc().replace('\n', '  ')
+      logging.error(error_message)
+      return 'Error';
+    return response;
+  return wrapper;
 
 
 def gen_fizzbuzz(length):
