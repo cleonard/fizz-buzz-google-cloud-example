@@ -3,7 +3,7 @@ from flask import Flask, jsonify
 app = Flask(__name__)
 
 
-def gen_fizzbuzz(l):
+def gen_fizzbuzz(length):
     def yield_fizzbuzz(i):
         fizz = (i % 3 == 0)
         buzz = (i % 5 == 0)
@@ -14,9 +14,9 @@ def gen_fizzbuzz(l):
         elif buzz:
             return 'BUZZ'
         else:
-            return str(n)
+            return str(i)
     n = 0
-    while n < l:
+    while n < length:
         yield yield_fizzbuzz(n + 1)
         n += 1
 
